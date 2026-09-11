@@ -9,7 +9,7 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Hello, world!\n")
+	io.WriteString(w, "Финальный Проект _  Если ты это видишь у тебя получилось. Поздравляю! \n")
 }
 
 // Route declaration
@@ -24,7 +24,7 @@ func main() {
 	router := router()
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         "127.0.0.1:8080",
+		Addr:         ":8080",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
