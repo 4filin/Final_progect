@@ -1,0 +1,66 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+env:
+  IMAGE_NAME: final-golang
+
+jobs:
+  # ============ Job 1: сборка и тесты (ВСЕГДА) ============
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+
+      - name: Run linter
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+
+      - name: Build
+        run: go build ./...
+
+      - name: Run tests
+        run: go test ./... -v -cover
+
+      - name: Build Docker image
+        run: docker build -t $IMAGE_NAME:${{ github.sha }} .
+
+  # ============ Job 2: деплой (ТОЛЬКО master) ============
+  # ⚠️ Заглушка: будет заполняться по мере готовности инфраструктуры (Terraform → ECR → EKS)
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: production          # включит "Required reviewers" — апрув перед деплоем
+    steps:
+      - name: Deploy placeholder
+        run: echo "Deploy step: push image to ECR and rollout EKS — will be enabled after Terraform setup"
+
+  # ============ Job 3: уведомление (ВСЕГДА) ============
+  notify:
+    needs: [build-and-test, deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            📦 ${{ github.repository }}
+            🔀 Ветка: ${{ github.ref_name }}
+            💬 Коммит: ${{ github.event.head_commit.message }}
+            🧪 Сборка/тесты: ${{ needs.build-and-test.result }}
+            🚀 Деплой: ${{ needs.deploy.result }}
+            🔗 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
