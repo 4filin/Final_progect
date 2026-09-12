@@ -23,8 +23,10 @@ jobs:
 
       - name: Run linter
         uses: golangci/golangci-lint-action@v6
+        env:
+          GOTOOLCHAIN: go1.24.0     # линтер работает на "своей" версии Go
         with:
-          version: latest
+          version: v1.64.8
 
       - name: Build
         run: go build ./...
