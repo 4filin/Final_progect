@@ -1,15 +1,16 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
 	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	if _, err := io.WriteStringWriteString(w, "Финальный Проект _  Если ты это видишь у тебя получилось. Поздравляю! \n") err != nil {
+	if _, err := io.WriteString(w, "Финальный Проект _ Если ты это видишь у тебя получилось. Поздравляю!\n"); err != nil {
 		http.Error(w, "failed to write response", http.StatusInternalServerError)
 	}
 }
