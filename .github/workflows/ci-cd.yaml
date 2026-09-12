@@ -44,7 +44,7 @@ jobs:
     environment: production          # включит "Required reviewers" — апрув перед деплоем
     steps:
       - name: Deploy placeholder
-        run: echo "Deploy step: push image to ECR and rollout EKS — will be enabled after Terraform setup"
+        run: echo echo "Deploy placeholder - push to ECR and rollout EKS after Terraform setup"
 
   # ============ Job 3: уведомление (ВСЕГДА) ============
   notify:
