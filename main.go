@@ -9,7 +9,9 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Финальный Проект _  Если ты это видишь у тебя получилось. Поздравляю! \n")
+	if _, err := io.WriteStringWriteString(w, "Финальный Проект _  Если ты это видишь у тебя получилось. Поздравляю! \n") err != nil {
+		http.Error(w, "failed to write response", http.StatusInternalServerError)
+	}
 }
 
 // Route declaration
