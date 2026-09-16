@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: final-golang
+  IMAGE_NAME: final-dm-dos35
 
 jobs:
   # ============ Job 1: сборка и тесты (ВСЕГДА) ============
@@ -81,10 +81,10 @@ jobs:
           envs: REGISTRY,ECR_PASSWORD
           script: |
             echo "$ECR_PASSWORD" | docker login --username AWS --password-stdin "$REGISTRY"
-            docker pull "$REGISTRY/final-golang:latest"
+            docker pull "$REGISTRY/final-dm-dos35:latest"
             docker stop app || true
             docker rm app || true
-            docker run -d -p 8080:8080 --name app --restart unless-stopped "$REGISTRY/final-golang:latest"
+            docker run -d -p 8080:8080 --name app --restart unless-stopped "$REGISTRY/final-dm-dos35:latest"
   
   # ============ Job 3: уведомление (ВСЕГДА) ============
   notify:
