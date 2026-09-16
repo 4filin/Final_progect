@@ -1,0 +1,22 @@
+---
+- name: Configuration server for app
+  hosts: app
+  become: true
+
+  tasks:
+    - name: Install Docker
+      dnf:
+        name: docker
+        state: present
+        update_only: no
+    - name: Start docker 
+      systemd:
+        name: docker
+        enabled: yes 
+        state: started 
+
+    - name: Add ec2-user to docker group
+      user: 
+        name: ec2-user 
+        groups: docker
+        append: yes
