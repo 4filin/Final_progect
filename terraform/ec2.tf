@@ -1,4 +1,3 @@
-# Свежий AMI Amazon Linux 2023 — ищется автоматически при каждом apply
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -43,7 +42,7 @@ resource "aws_key_pair" "deployer" {
   public_key = file(pathexpand("~/.ssh/final_project.pub"))
 }
 
-# Сервер: t3.micro — бесплатный Free Tier (750 ч/мес первый год)
+
 resource "aws_instance" "app" {
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = "t3.micro"
