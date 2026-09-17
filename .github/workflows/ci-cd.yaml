@@ -9,7 +9,7 @@ env:
   IMAGE_NAME: final-dm-dos35
 
 jobs:
-  # ============ Job 1: сборка и тесты (ВСЕГДА) ============
+
   build-and-test:
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +38,7 @@ jobs:
         run: docker build -t $IMAGE_NAME:${{ github.sha }} .
 
   
-    # ============ Job 2: деплой (ТОЛЬКО master) ============
+
   deploy:
     needs: build-and-test
     if: github.ref == 'refs/heads/master'
