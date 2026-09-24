@@ -15,7 +15,7 @@ func TestHandler(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Errorf("expected status 200, got %d", rec.Code)
 	}
-	if rec.Body.String() != "Финальный Проект _ Если ты это видишь у тебя получилось. Поздравляю!\n" {
+	if rec.Body.String() != "Финальный Проект отработал. Если ты это видишь у тебя получилось. Поздравляю! \n" {
 		t.Errorf("unexpected body: %q", rec.Body.String())
 	}
 }

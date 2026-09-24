@@ -69,25 +69,40 @@ jobs:
         id: ecrpwd
         run: echo "password=$(aws ecr get-login-password --region us-west-1)" >> "$GITHUB_OUTPUT"
 
-      - name: Deploy to EC2 via SSH
+      - name: Get server IP
+        id: server
+        run: |
+          IP=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=final-project-app" "Name=instance-state-name,Values=running" \
+            --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+          echo "ip=$IP" >> "$GITHUB_OUTPUT"
+
+      - name: Copy compose and monitoring configs to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ steps.server.outputs.ip }}
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml,monitoring/prometheus.yml"
+          target: "~/app"
+
+      - name: Deploy stack with docker compose
         uses: appleboy/ssh-action@v1
         env:
           REGISTRY: ${{ steps.ecr.outputs.registry }}
           ECR_PASSWORD: ${{ steps.ecrpwd.outputs.password }}
         with:
-          host: ${{ secrets.APP_SERVER_IP }}
-          username: ec2-user  
+          host: ${{ steps.server.outputs.ip }}
+          username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           envs: REGISTRY,ECR_PASSWORD
           script: |
             echo "$ECR_PASSWORD" | docker login --username AWS --password-stdin "$REGISTRY"
-            docker pull "$REGISTRY/final-dm-dos35:latest"
-            docker stop app || true
-            docker rm app || true
-            docker run -d -p 8080:8080 --name app --restart unless-stopped "$REGISTRY/final-dm-dos35:latest"
+            cd ~/app
+            docker compose pull
+            docker compose up -d
   
-  # ============ Job 3: уведомление (ВСЕГДА) ============
+ # уведомление (ВСЕГДА) ============
   notify:
     needs: [build-and-test, deploy]
     if: always()

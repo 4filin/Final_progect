@@ -1,6 +1,6 @@
 ---
 - name: Configuration server for app
-  hosts: app
+  hosts: all
   become: true
 
   tasks:
@@ -9,6 +9,7 @@
         name: docker
         state: present
         update_only: no
+        
     - name: Start docker 
       systemd:
         name: docker
