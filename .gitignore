@@ -19,4 +19,7 @@ vendor/
 
 # Windows system files
 Thumbs.db
-Desktop.ini
+Desktop.ini.terraform/
+*.tfstate*
+awscliv2.zip
+aws/
