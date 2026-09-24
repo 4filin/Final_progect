@@ -35,8 +35,6 @@ jobs:
       - name: Build Docker image
         run: docker build -t $IMAGE_NAME:${{ github.sha }} .
 
-  
-
   deploy:
     needs: build-and-test
     if: github.ref == 'refs/heads/master'

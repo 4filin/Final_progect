@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -12,7 +16,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-// Метрики приложения
 var (
 	httpRequestsTotal = promauto.NewCounterVec(
 		prometheus.CounterOpts{
@@ -31,7 +34,6 @@ var (
 	)
 )
 
-// instrumentation: оборачиваем handler, считаем запросы и время
 func instrument(path string, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -47,23 +49,39 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Route declaration
+func healthz(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) }
+func readyz(w http.ResponseWriter, _ *http.Request)  { w.WriteHeader(http.StatusOK) }
+
 func router() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/", instrument("/", handler))
-	r.Handle("/metrics", promhttp.Handler()) // endpoint для Prometheus
+	r.HandleFunc("/healthz", healthz)
+	r.HandleFunc("/readyz", readyz)
+	r.Handle("/metrics", promhttp.Handler())
 	return r
 }
 
-// Initiate web server
 func main() {
-	router := router()
 	srv := &http.Server{
-		Handler:      router,
+		Handler:      router(),
 		Addr:         ":8080",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Fatal(srv.ListenAndServe())
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	go func() {
+		log.Println("starting server on :8080")
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("server error: %v", err)
+		}
+	}()
+
+	<-ctx.Done()
+	log.Println("shutting down...")
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	_ = srv.Shutdown(shutdownCtx)
 }

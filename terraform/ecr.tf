@@ -11,5 +11,3 @@ resource "aws_ecr_repository" "app" {
 output "ecr_repository_url" {
   value = aws_ecr_repository.app.repository_url
 }
-
-#ecr_repository_url = "224843962620.dkr.ecr.us-west-1.amazonaws.com/final-dm-dos35"#
