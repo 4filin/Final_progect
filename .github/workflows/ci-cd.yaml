@@ -80,7 +80,7 @@ jobs:
         with:
           host: ${{ steps.server.outputs.ip }}
           username: ec2-user
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}     
           source: "docker-compose.yml,monitoring/prometheus.yml"
           target: "~/app"
 
