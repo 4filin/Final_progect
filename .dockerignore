@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .git
 .github
 .vscode
@@ -7,14 +6,4 @@ ansible
 k8s
 monitoring
 *.exe
-=======
-.git
-.github
-.vscode
-terraform
-ansible
-k8s
-monitoring
-*.exe
->>>>>>> d8dfa589e5dd031400791add7bd303688d0d7691
 *.md
