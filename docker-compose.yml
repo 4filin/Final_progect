@@ -1,6 +1,6 @@
 services:
   app:
-    image: ${REGISTRY}/final-golang:latest
+    image: ${REGISTRY}/final-dm-dos35:latest
     container_name: app
     ports:
       - "8080:8080"
