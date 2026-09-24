@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -23,3 +24,27 @@ Desktop.ini.terraform/
 *.tfstate*
 awscliv2.zip
 aws/
+=======
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# Visual Studio Code
+.vscode/
+
+# Windows system files
+Thumbs.db
+Desktop.ini
+>>>>>>> d8dfa589e5dd031400791add7bd303688d0d7691

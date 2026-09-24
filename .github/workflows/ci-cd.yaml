@@ -119,4 +119,3 @@ jobs:
             💬 Коммит: ${{ github.event.head_commit.message }}
             🧪 Сборка/тесты: ${{ needs.build-and-test.result }}
             🚀 Деплой: ${{ needs.deploy.result }}
-            🔗 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
