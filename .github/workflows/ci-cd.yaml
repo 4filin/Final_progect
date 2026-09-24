@@ -81,7 +81,7 @@ jobs:
           host: ${{ steps.server.outputs.ip }}
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}     
-          source: "docker-compose.yml,monitoring/prometheus.yml"
+          source: "docker-compose.yml,monitoring/"
           target: "~/app"
 
       - name: Deploy stack with docker compose
