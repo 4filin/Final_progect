@@ -16,7 +16,7 @@ module "eks" {
 
 
   cluster_name    = "final-project"
-  cluster_version = "1.30"
+  cluster_version = "1.35"
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnets.default.ids
@@ -36,6 +36,17 @@ module "eks" {
   }
 }
 
+# kubectl изнутри VPC (dev-инстанс, будущие CI-агенты в VPC)
+resource "aws_security_group_rule" "cluster_ingress_vpc" {
+  description       = "Allow HTTPS to cluster API from within VPC"
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  security_group_id = module.eks.cluster_security_group_id
+  cidr_blocks       = [data.aws_vpc.default.cidr_block]
+}
+
 output "cluster_name" {
   value = module.eks.cluster_name
 }
@@ -43,3 +54,4 @@ output "cluster_name" {
 output "cluster_endpoint" {
   value = module.eks.cluster_endpoint
 }
+
