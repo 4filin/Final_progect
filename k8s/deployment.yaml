@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: final-golang
+spec:
+  replicas: 2                    # несколько подов = балансировка и отказоустойчивость
+  selector:
+    matchLabels:
+      app: final-golang
+  template:
+    metadata:
+      labels:
+        app: final-golang
+    spec:
+      containers:
+        - name: app
+          image: 224843962620.dkr.ecr.us-west-1.amazonaws.com/final-dm-dos35:latest
+          ports:
+            - containerPort: 8080
+          readinessProbe:        # под получает трафик только когда готов
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:         # перезапуск пода при зависании
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20

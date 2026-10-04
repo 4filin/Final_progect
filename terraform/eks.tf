@@ -47,6 +47,16 @@ resource "aws_security_group_rule" "cluster_ingress_vpc" {
   cidr_blocks       = [data.aws_vpc.default.cidr_block]
 }
 
+resource "aws_security_group_rule" "nodeport_app" {
+  description              = "NodePort from EC2 nginx"
+  type                     = "ingress"
+  from_port                = 30080
+  to_port                  = 30080
+  protocol                 = "tcp"
+  security_group_id        = module.eks.node_security_group_id
+  source_security_group_id = aws_security_group.app.id
+}
+
 output "cluster_name" {
   value = module.eks.cluster_name
 }

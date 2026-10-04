@@ -34,3 +34,37 @@
         dest: /usr/local/lib/docker/cli-plugins/docker-compose
         mode: "0755"
         force: no
+
+    - name: Install nginx
+      dnf:
+        name: nginx
+        state: present
+
+    - name: Configure nginx as reverse proxy to EKS nodes
+      copy:
+        dest: /etc/nginx/conf.d/app_proxy.conf
+        content: |
+          upstream app_backend {
+              server 172.31.14.60:30080;
+              server 172.31.22.68:30080;
+          }
+          server {
+              listen 80;
+              location / {
+                  proxy_pass http://app_backend;
+                  proxy_set_header Host $host;
+              }
+          }
+      notify: Restart nginx
+
+    - name: Start nginx
+      systemd:
+        name: nginx
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: Restart nginx
+      systemd:
+        name: nginx
+        state: restarted
