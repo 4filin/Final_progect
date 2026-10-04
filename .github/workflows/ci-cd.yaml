@@ -73,30 +73,39 @@ jobs:
             --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
           echo "ip=$IP" >> "$GITHUB_OUTPUT"
 
-      - name: Copy compose and monitoring configs to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ steps.server.outputs.ip }}
-          username: ec2-user
-          key: ${{ secrets.SSH_PRIVATE_KEY }}     
-          source: "docker-compose.yml,monitoring/prometheus.yml"
-          target: "~/app"
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --region us-west-1 --name final-project
 
-      - name: Deploy stack with docker compose
-        uses: appleboy/ssh-action@v1
-        env:
-          REGISTRY: ${{ steps.ecr.outputs.registry }}
-          ECR_PASSWORD: ${{ steps.ecrpwd.outputs.password }}
-        with:
-          host: ${{ steps.server.outputs.ip }}
-          username: ec2-user
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: REGISTRY,ECR_PASSWORD
-          script: |
-            echo "$ECR_PASSWORD" | docker login --username AWS --password-stdin "$REGISTRY"
-            cd ~/app
-            docker compose pull
-            docker compose up -d
+      - name: Deploy to EKS
+        run: |
+          kubectl apply -f k8s/
+          kubectl rollout status deployment final-golang --timeout=180s
+
+
+      # - name: Copy compose and monitoring configs to server
+      #   uses: appleboy/scp-action@v0.1.7
+      #   with:
+      #     host: ${{ steps.server.outputs.ip }}
+      #     username: ec2-user
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}     
+      #     source: "docker-compose.yml,monitoring/prometheus.yml"
+      #     target: "~/app"
+
+      # - name: Deploy stack with docker compose
+      #   uses: appleboy/ssh-action@v1
+      #   env:
+      #     REGISTRY: ${{ steps.ecr.outputs.registry }}
+      #     ECR_PASSWORD: ${{ steps.ecrpwd.outputs.password }}
+      #   with:
+      #     host: ${{ steps.server.outputs.ip }}
+      #     username: ec2-user
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     envs: REGISTRY,ECR_PASSWORD
+      #     script: |
+      #       echo "$ECR_PASSWORD" | docker login --username AWS --password-stdin "$REGISTRY"
+      #       cd ~/app
+      #       docker compose pull
+      #       docker compose up -d
   
  # уведомление (ВСЕГДА) ============
   notify:
