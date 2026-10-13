@@ -38,6 +38,7 @@ func instrument(path string, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		h(w, r)
+		log.Printf("%s %s %s", r.Method, r.URL.Path, time.Since(start))		
 		httpRequestsTotal.WithLabelValues(path, r.Method).Inc()
 		httpRequestDuration.WithLabelValues(path, r.Method).Observe(time.Since(start).Seconds())
 	}
