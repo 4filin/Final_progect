@@ -3,7 +3,9 @@ plugin: amazon.aws.aws_ec2
 regions:
   - us-west-1
 filters:
-  tag:Name: final-project-app
+  tag:Name:
+    - final-project-app
+    - final-project-elk
 hostnames:
   - instance-id
 compose:
