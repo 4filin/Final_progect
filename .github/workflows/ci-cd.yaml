@@ -57,10 +57,11 @@ jobs:
 
       - name: Build and push image to ECR
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          docker push ${{ steps.ecr.outputs.registry }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ steps.ecr.outputs.registry }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ steps.ecr.outputs.registry }}/${{ env.IMAGE_NAME }}:latest
+          IMAGE=${{ steps.ecr.outputs.registry }}/${{ env.IMAGE_NAME }}
+          docker build -t $IMAGE:${{ github.sha }} .
+          docker push $IMAGE:${{ github.sha }}
+          docker tag $IMAGE:${{ github.sha }} $IMAGE:latest
+          docker push $IMAGE:latest
 
       - name: Get ECR login password
         id: ecrpwd

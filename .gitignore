@@ -24,3 +24,4 @@ Desktop.ini.terraform/
 *.tfstate*
 awscliv2.zip
 aws/
+.terraform/
