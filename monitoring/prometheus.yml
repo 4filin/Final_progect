@@ -12,4 +12,4 @@ scrape_configs:
 
   - job_name: app-eks
     static_configs:
-      - targets: ["172.31.28.154:80"]
+      - targets: ["172.31.15.129:80"]

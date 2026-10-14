@@ -56,8 +56,8 @@
         dest: /etc/nginx/conf.d/app_proxy.conf
         content: |
           upstream app_backend {
-              server 172.31.13.8:30080;
-              server 172.31.31.129:30080;
+              server 172.31.12.145:30080;
+              server 172.31.21.94:30080;
           }
           server {
               listen 80;

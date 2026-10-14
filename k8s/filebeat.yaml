@@ -45,7 +45,7 @@ data:
             - logs_path:
                 logs_path: "/var/log/containers/"
     output.elasticsearch:
-      hosts: ["http://35.90.69.171:9200"]
+      hosts: ["http://35.91.134.45:9200"]
       index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
     setup.template.name: "filebeat"
     setup.template.pattern: "filebeat-*"
