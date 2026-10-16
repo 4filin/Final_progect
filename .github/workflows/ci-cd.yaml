@@ -85,31 +85,7 @@ jobs:
             app=${{ steps.ecr.outputs.registry }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           kubectl rollout status deployment final-golang --timeout=180s
 
-      # - name: Copy compose and monitoring configs to server
-      #   uses: appleboy/scp-action@v0.1.7
-      #   with:
-      #     host: ${{ steps.server.outputs.ip }}
-      #     username: ec2-user
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}     
-      #     source: "docker-compose.yml,monitoring/prometheus.yml"
-      #     target: "~/app"
-
-      # - name: Deploy stack with docker compose
-      #   uses: appleboy/ssh-action@v1
-      #   env:
-      #     REGISTRY: ${{ steps.ecr.outputs.registry }}
-      #     ECR_PASSWORD: ${{ steps.ecrpwd.outputs.password }}
-      #   with:
-      #     host: ${{ steps.server.outputs.ip }}
-      #     username: ec2-user
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     envs: REGISTRY,ECR_PASSWORD
-      #     script: |
-      #       echo "$ECR_PASSWORD" | docker login --username AWS --password-stdin "$REGISTRY"
-      #       cd ~/app
-      #       docker compose pull
-      #       docker compose up -d
-  
+ 
  # уведомление (ВСЕГДА) ============
   notify:
     needs: [build-and-test, deploy]

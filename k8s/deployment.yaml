@@ -19,13 +19,13 @@ spec:
             - containerPort: 8080
           readinessProbe:        # под получает трафик только когда готов
             httpGet:
-              path: /
+              path: /readyz
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:         # перезапуск пода при зависании
             httpGet:
-              path: /
+              path: /healthz
               port: 8080
             initialDelaySeconds: 15
             periodSeconds: 20
